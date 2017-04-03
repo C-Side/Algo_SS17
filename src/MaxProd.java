@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
  *
  * @author Klinghammer, Kroll, Walk
  * @version %I%, %G%
+ *  geschätzte Laufzeit O(n)
+ *  geschätzter Speicher O(1)
  */
 public class MaxProd {
 
