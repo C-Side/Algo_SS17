@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
  *
  * @author Klinghammer, Kroll, Walk
  * @version %I%, %G%
+ *  geschätzte Laufzeit O(n) da Scanline verfahren
  */
 public class MaxProd {
 
