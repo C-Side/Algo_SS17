@@ -10,7 +10,6 @@ public class PermOdds {
 
 	private int[] a; // a Arbeitsarray
 	private int max; // maximaler Index
-	private boolean mayread = false; // Kontrolle
 	private int counter = 1;
 
 	PermOdds (int n){ // Konstruktor
@@ -20,7 +19,7 @@ public class PermOdds {
 	} // end Konstruktor
 
 	private void perm (int i){ // permutiere ab Index i
-		if (i >= max)printArray(a); // eine Permutation fertig
+		if (i >= max) checkUneven(a); // eine Permutation fertig
 		else {
 			for (int j=i; j <= max; j++){ // jedes nach Vorne
 				swap (i,j); // vertauschen
@@ -36,6 +35,19 @@ public class PermOdds {
 		if (i != j)
 		{ int h = a[i]; a[i] = a[j]; a[j] = h; }
 	} // end swap
+
+	private void checkUneven(int[] a) {
+		boolean print = true;
+		for (int i = 0; i < a.length - 1; i++) {
+			int one = (a[i] + i + 1) %2;
+			int two = (a[i + 1] + i + 2) %2;
+			if (one == 1 && two == 1) {
+				print = false;
+				break;
+			}
+		}
+		if (print) printArray(a);
+	}
 
 	private void printArray(int[] arr) {
 		System.out.print(counter++ + "[");
