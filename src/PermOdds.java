@@ -3,27 +3,31 @@
  * Abgabe 24.04.2017
  * Aufgabe 4.1
  *
- * @author Klinghammer, Kroll, Walk
+ * @author Klinghammer, Kroll, Walk, auf Basis von Prof. Heinz
  * @version %I%, %G%
  */
 public class PermOdds {
 
-	private int[] a; // a Arbeitsarray
+	private static int[] a; // a Arbeitsarray
 	private int max; // maximaler Index
-	private static int counter = 0;
+	private static double counter = 0;
+	private static double totCounter = 0;
+	private static double altCounter = 0;
 
 	PermOdds (int n){ // Konstruktor
-		a = new int[n]; // Indices: 0 .. n-1
+						 // Indices: 0 .. n-1
 		max = n - 1; // Maximaler Index
 		for (int i=0; i<=max;i++) a[i]=1+i; // a fuellen
 	} // end Konstruktor
 
-	private void perm (int i){ // permutiere ab Index i
-		if (i >= max) checkUneven(a); // Permutation auf Bedingung überprüfen
+	private void perm (int i, int[] b){ // permutiere ab Index i
+		//printArray(a);
+		if (i >= max) counter++; // Permutation auf Bedingung überprüfen
 		else {
 			for (int j=i; j <= max; j++){ // jedes nach Vorne
 				swap (i,j); // vertauschen
-				perm (i+1); // und Rekursion
+				perm (i+1, a); // und Rekursion
+				if (a.equals(b)) altCounter++;
 			}
 			int h = a[i]; // restauriere Array
 			System.arraycopy (a,i+1,a,i,max-i); // shift links
@@ -46,7 +50,7 @@ public class PermOdds {
 				break;
 			}
 		}
-		if (print) printArray(a); //printe das array
+		if (print) counter++; //printe das array
 	}
 
 	private void printArray(int[] arr) {
@@ -55,13 +59,18 @@ public class PermOdds {
 			System.out.print(" " + arr[i]);
 		}
 		System.out.println(" ]");
-		counter++;
+		totCounter++;
 	}
 
 	public static void main(String args[]) {
 		int n = Integer.parseInt (args[0]);
+		a = new int[n];
 		PermOdds permOdds = new PermOdds(n);
-		permOdds.perm(0);
-		System.out.print("Es gab genau " + counter + " Permutationen der verlangten Art!");
+		permOdds.perm(0, a);
+		System.out.println("Es gab genau " + counter + " Permutationen der verlangten Art!");
+		System.out.println("Es gab insgesamt " + totCounter + " Perm Aufrufe!");
+		System.out.println("Es gab insgesamt " + altCounter + " entfallene Perms!");
+		double zahl = altCounter/counter;
+		System.out.println("Es gab insgesamt " + zahl + " Perm Aufrufe!");
 	}
 }
