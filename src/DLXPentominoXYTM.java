@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 
 /**
- * [Text goes here]
+ * berechnet die anzahl der passenden lösungen
  *
  * @author Klinghammer, Walk, Kroll auf Basis von Heinz
  * @version %I%, %G%
@@ -231,118 +231,76 @@ public class DLXPentominoXYTM {
 	 */
 	private static void calculateMatrix() {
 
-		boolean erstesElement = true;
+		boolean firstElement = true;
 		matrix = new DLXNode[size][subsets.size() + 1];
-		DLXNode letzterSpaltenkopf = new DLXNode();//Referenz auf letzten Spaltenkopf
+		DLXNode lastNode = new DLXNode();
 
-		for (int i = 0; i <= size - 1; i++)//Spaltenköpfe erstellen und verknüpfen
+		for (int i = 0; i <= size - 1; i++)
 		{
 			matrix[i][0] = new DLXNode();
 			matrix[i][0].C = matrix[i][0];
-			//Wenn i>0 dann ist letzter Spaltenkopf bereits bekannt
+
 			if (i > 0) {
-				letzterSpaltenkopf.R = matrix[i][0];
-				matrix[i][0].L = letzterSpaltenkopf;
+				lastNode.R = matrix[i][0];
+				matrix[i][0].L = lastNode;
 			}
-			letzterSpaltenkopf = matrix[i][0];
+			lastNode = matrix[i][0];
 		}
-		//Anker verknüpfen
-		letzterSpaltenkopf.R = header;
-		header.L = letzterSpaltenkopf;
+
+		//connect header
+		lastNode.R = header;
+		header.L = lastNode;
 		header.R = matrix[0][0];
 		matrix[0][0].L = header;
 
-		for (int i = 0; i <= subsets.size() - 1; i++)//Zeilen erstellen + verknüpfen
+		for (int row = 0; row <= subsets.size() - 1; row++)
 		{
-			DLXNode ersterZeilenEintrag = new DLXNode();//erster Zeileneintrag
-			DLXNode letzterZeilenEintrag = new DLXNode();//letzter Zeileneintrag
-			int[] reihe = subsets.get(i);
-			//zugehörige Spalte bestimmen
-			for (int j = 0; j <= reihe.length - 1; j++) {
-				int spalte = reihe[j] - 1;//-1 da spalten von 0 bis felgröße -1 gehen
-				matrix[spalte][i + 1] = new DLXNode();
-				matrix[spalte][i + 1].C = matrix[spalte][0];//Stimmt das?
-				//verknüpfen
-				if (j > 0)//Wenn i>0 dann ist letzterZeilenEintrag bereits bekannt
+			DLXNode firstRowEntry = new DLXNode();
+			DLXNode lastRowEntry = new DLXNode();
+
+			int[] rowArray = subsets.get(row);
+
+			for (int column = 0; column <= rowArray.length - 1; column++) {
+				int columnArray = rowArray[column] - 1;
+				matrix[columnArray][row + 1] = new DLXNode();
+				matrix[columnArray][row + 1].C = matrix[columnArray][0];
+				if (column > 0)
 				{
-					matrix[spalte][i + 1].L = letzterZeilenEintrag;
-					letzterZeilenEintrag.R = matrix[spalte][i + 1];
+					matrix[columnArray][row + 1].L = lastRowEntry;
+					lastRowEntry.R = matrix[columnArray][row + 1];
 				} else {
-					ersterZeilenEintrag = matrix[spalte][i + 1];
+					firstRowEntry = matrix[columnArray][row + 1];
 				}
-				letzterZeilenEintrag = matrix[spalte][i + 1];
+				lastRowEntry = matrix[columnArray][row + 1];
 			}
-			//erste und letzte Zeile verknüpfen
-			ersterZeilenEintrag.L = letzterZeilenEintrag;
-			letzterZeilenEintrag.R = ersterZeilenEintrag;
+			firstRowEntry.L = lastRowEntry;
+			lastRowEntry.R = firstRowEntry;
 		}
 
-		for (int i = 0; i <= size - 1; i++)//Spalten verküpfen
+		for (int i = 0; i <= size - 1; i++)
 		{
-			erstesElement = true;
+			firstElement = true;
 			DLXNode letzterSpaltenEintrag = new DLXNode();
-			for (int ii = 0; ii <= subsets.size() - 1; ii++)//Alle Elemene einer Spalte durchgehen
+			for (int ii = 0; ii <= subsets.size() - 1; ii++)
 			{
-				if (matrix[i][ii + 1] instanceof DLXNode)//Wenn Element in der Matrix vom Typ DLX Node ist
+				if (matrix[i][ii + 1] instanceof DLXNode)
 				{
-					if (erstesElement)//und erstes Element
+					if (firstElement)
 					{
 						matrix[i][0].D = matrix[i][ii + 1];
 						matrix[i][ii + 1].U = matrix[i][0];
-						erstesElement = false;
+						firstElement = false;
 						letzterSpaltenEintrag = matrix[i][ii + 1];
 					} else {
 						letzterSpaltenEintrag.D = matrix[i][ii + 1];
 						matrix[i][ii + 1].U = letzterSpaltenEintrag;
 						letzterSpaltenEintrag = matrix[i][ii + 1];
 					}
-					matrix[i][ii + 1].C = matrix[i][0];//Referenz auf Spaltenkopf
+					matrix[i][ii + 1].C = matrix[i][0];
 				}
 			}
 			letzterSpaltenEintrag.D = matrix[i][0];
 			matrix[i][0].U = letzterSpaltenEintrag;
-		}
-	}
-
-	public static void ma()
-	{
-		String spalten2 = "";
-		for (int i = 1; i<= size;i++)//Beschriftet die Spalten
-		{
-			if(i==size/2)
-			{
-				spalten2 = spalten2 +"Spaltenzahl = " + size;
-			}
-			else{
-				spalten2 = spalten2 + "----";
-			}
-		}
-		System.out.println(spalten2);
-		for(int ii = 0;ii<=subsets.size(); ii++)//Für jede Zeile
-		{
-			String zeile = "| ";
-			for (int i = 0;i<=size-1;i++)//gehe die Spalten durch
-			{
-
-				if (matrix[i][ii]!=null)//Setze eine 1 wenn die Matrix an dieser Stelle schon einen Node hat
-				{
-					zeile = zeile + 1 + " | ";
-				}
-				else //Ansonsten 0
-				{
-					zeile = zeile + 0 + " | ";
-				}
-
-			}
-			if(ii==0)//1 Reihe wird beschriftet
-			{
-				System.out.println(zeile + "- " + ii + " Zeilen = Anzahl Teilmengen");
-			}
-			else
-			{
-				System.out.println(zeile + "- " + ii + "");
-			}
-
 		}
 	}
 
@@ -356,7 +314,6 @@ public class DLXPentominoXYTM {
 			size = 6 * n;
 			calculateSubsets();
 			calculateMatrix();
-			ma();
 			search(0);
 			System.out.println("a(" + n + ") = " + counter);
 		}
